@@ -147,12 +147,21 @@ JSONVar::operator double() const
   return cJSON_IsNumber(_json) ? _json->valuedouble : NAN;
 }
 
-JSONVar::operator const char*() const
+JSONVar::operator const char*( ) const
 {
-  if (cJSON_IsString(_json)) {
+	if ( cJSON_IsString( _json ) )
+	{
     return _json->valuestring;
   }
+	return NULL;
+}
 
+JSONVar::operator String() const
+{
+	if ( cJSON_IsString( _json ) )
+	{
+		return String( _json->valuestring );
+	}
   return NULL;
 }
 
@@ -242,60 +251,81 @@ bool JSONVar::operator==(nullptr_t) const
   return (cJSON_IsNull(_json));
 }
 
-JSONVar JSONVar::operator[](const char* key)
+JSONVar JSONVar::operator[]( const char* key )
 {
-  if (!cJSON_IsObject(_json)) {
-    replaceJson(cJSON_CreateObject());
+	if ( !cJSON_IsObject( _json ) )
+	{
+		replaceJson( cJSON_CreateObject() );
   }
-
-  cJSON* json = cJSON_GetObjectItemCaseSensitive(_json, key);
-
-  if (json == NULL) {
-    json = cJSON_AddNullToObject(_json, key);
+	cJSON* json = cJSON_GetObjectItemCaseSensitive( _json, key );
+	if ( json == NULL )
+	{
+		json = cJSON_AddNullToObject( _json, key );
   }
+	return JSONVar( json, _json );
+}
   
-  return JSONVar(json, _json);    
+JSONVar JSONVar::operator[]( const char* key ) const
+{
+	if ( !cJSON_IsObject( _json ) )
+	{
+		return undefined;
+	}
+	cJSON* json = cJSON_GetObjectItemCaseSensitive( _json, key );
+	if ( json == NULL )
+	{
+		json = cJSON_AddNullToObject( _json, key );
+	}
+	return JSONVar( json, _json );
 }
 
-JSONVar JSONVar::operator[](const String& key)
+JSONVar JSONVar::operator[](const String& key) const
 {
   return (*this)[key.c_str()];
 }
 
-JSONVar JSONVar::operator[](int index)
+JSONVar JSONVar::operator[]( int index )
 {
-  if (!cJSON_IsArray(_json)) {
-    replaceJson(cJSON_CreateArray());
+	if ( !cJSON_IsArray( _json ) )
+	{
+		replaceJson( cJSON_CreateArray() );
   }
-
-  cJSON* json = cJSON_GetArrayItem(_json, index);
-
-  if (json == NULL) {
-    while (index >= cJSON_GetArraySize(_json)) {
+	cJSON* json = cJSON_GetArrayItem( _json, index );
+	if ( json == NULL )
+	{
+		while ( index >= cJSON_GetArraySize( _json ) )
+		{
       json = cJSON_CreateNull();
 
-      cJSON_AddItemToArray(_json, json);
+			cJSON_AddItemToArray( _json, json );
     }
   }
-
-  return JSONVar(json, _json);
+	return JSONVar( json, _json );
 }
 
-JSONVar JSONVar::operator[](const JSONVar& key)
+JSONVar JSONVar::operator[](int index) const
 {
-  if (cJSON_IsArray(_json) && cJSON_IsNumber(key._json)) {
-    int index = (int)key;
-
-    return (*this)[index];
+	if ( !cJSON_IsArray( _json ) )
+	{
+		return undefined;
   }
+	cJSON* json = cJSON_GetArrayItem( _json, index );
+	return JSONVar( json, _json );
+}
 
-  if (cJSON_IsObject(_json) && cJSON_IsString(key._json)) {
-    const char* str = (const char*) key;
-
-    return (*this)[str];
+JSONVar JSONVar::operator[]( const JSONVar& key ) const
+{
+	if ( cJSON_IsArray( _json ) && cJSON_IsNumber( key._json ) )
+	{
+		int index = ( int ) key;
+		return ( *this )[ index ];
   }
-
-  return JSONVar(NULL, NULL);
+	if ( cJSON_IsObject( _json ) && cJSON_IsString( key._json ) )
+	{
+		const char* str = ( const char* ) key;
+		return ( *this )[ str ];
+	}
+	return JSONVar( NULL, NULL );
 }
 
 int JSONVar::length() const

@@ -51,6 +51,7 @@ public:
   operator long() const;
   operator double() const;
   operator const char*() const;
+  operator String() const;
 
   void operator=(const JSONVar& v);
 #if __cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -69,9 +70,11 @@ public:
   bool operator==(nullptr_t) const;
 
   JSONVar operator[](const char* key);
-  JSONVar operator[](const String& key);
+  JSONVar operator[]( const char* key ) const;
+  JSONVar operator[](const String& key) const;
   JSONVar operator[](int index);
-  JSONVar operator[](const JSONVar& key);
+  JSONVar operator[](int index) const;
+  JSONVar operator[](const JSONVar& key) const;
 
   int length() const;
   JSONVar keys() const;
