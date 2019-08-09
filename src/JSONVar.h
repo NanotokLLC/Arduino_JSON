@@ -1,4 +1,12 @@
 /*
+ * \file
+ * ID:            $Id: $
+ * Revision:      $Revision: $
+ * Checked in by: $Author: $
+ * Last modified: $Date: $
+ */
+
+ /*
   This file is part of the Arduino JSON library.
   Copyright (c) 2019 Arduino SA. All rights reserved.
 
@@ -41,33 +49,34 @@ public:
 #if __cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__)
   JSONVar(JSONVar&& v);
 #endif
-  JSONVar(nullptr_t);
+  JSONVar(std::nullptr_t);
   virtual ~JSONVar();
 
   virtual size_t printTo(Print& p) const;
 
   operator bool() const;
   operator int() const;
+  operator unsigned int() const;
   operator long() const;
   operator double() const;
   operator const char*() const;
   operator String() const;
 
-  void operator=(const JSONVar& v);
+  JSONVar& operator=(const JSONVar& v);
 #if __cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__)
   JSONVar& operator=(JSONVar&& v);
 #endif
-  void operator=(bool b);
-  void operator=(int i);
-  void operator=(long l);
-  void operator=(unsigned long ul);
-  void operator=(double d);
-  void operator=(const char* s);
-  void operator=(const String& s);
-  void operator=(nullptr_t);
+  JSONVar& operator=(bool b);
+  JSONVar& operator=(int i);
+  JSONVar& operator=(long l);
+  JSONVar& operator=(unsigned long ul);
+  JSONVar& operator=(double d);
+  JSONVar& operator=(const char* s);
+  JSONVar& operator=(const String& s);
+  JSONVar& operator=(std::nullptr_t);
 
   bool operator==(const JSONVar& v) const;
-  bool operator==(nullptr_t) const;
+  bool operator==(std::nullptr_t) const;
 
   JSONVar operator[](const char* key);
   JSONVar operator[]( const char* key ) const;

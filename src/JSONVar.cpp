@@ -1,4 +1,12 @@
 /*
+ * \file
+ * ID:            $Id: $
+ * Revision:      $Revision: $
+ * Checked in by: $Author: $
+ * Last modified: $Date: $
+ */
+
+ /*
   This file is part of the Arduino JSON library.
   Copyright (c) 2019 Arduino SA. All rights reserved.
 
@@ -92,7 +100,7 @@ JSONVar::JSONVar(JSONVar&& v)
 }
 #endif
 
-JSONVar::JSONVar(nullptr_t)  :
+JSONVar::JSONVar(std::nullptr_t)  :
   JSONVar()
 {
   *this = nullptr;
@@ -137,6 +145,11 @@ JSONVar::operator int() const
   return cJSON_IsNumber(_json) ? _json->valueint : 0;
 }
 
+JSONVar::operator unsigned int() const
+{
+  return static_cast< unsigned int >( cJSON_IsNumber(_json) ? _json->valueint : 0 );
+}
+
 JSONVar::operator long() const
 {
   return cJSON_IsNumber(_json) ? _json->valueint : 0;
@@ -162,10 +175,10 @@ JSONVar::operator String() const
 	{
 		return String( _json->valuestring );
 	}
-  return NULL;
+	return String();
 }
 
-void JSONVar::operator=(const JSONVar& v)
+JSONVar& JSONVar::operator=(const JSONVar& v)
 {
   if (&v == &undefined) {
     if (cJSON_IsObject(_parent)) {
@@ -179,6 +192,7 @@ void JSONVar::operator=(const JSONVar& v)
   } else {
     replaceJson(cJSON_Duplicate(v._json, true));
   }
+  return *this;
 }
 
 #if __cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -195,58 +209,66 @@ JSONVar& JSONVar::operator=(JSONVar&& v)
   tmp = _parent;
   _parent = v._parent;
   v._parent = tmp;
-
-  return *this;
+    return *this;
 }
 #endif
 
-void JSONVar::operator=(bool b)
+JSONVar& JSONVar::operator=(bool b)
 {
   replaceJson(b ? cJSON_CreateTrue() : cJSON_CreateFalse());
+  return *this;
 }
 
-void JSONVar::operator=(int i)
+JSONVar& JSONVar::operator=( int i)
 {
   replaceJson(cJSON_CreateNumber(i));
+  return *this;
 }
 
-void JSONVar::operator=(long l)
+JSONVar& JSONVar::operator=( long l)
 {
   replaceJson(cJSON_CreateNumber(l));
+  return *this;
 }
 
-void JSONVar::operator=(unsigned long ul)
+JSONVar& JSONVar::operator=( unsigned long ul)
 {
   replaceJson(cJSON_CreateNumber(ul));
+  return *this;
 }
 
-void JSONVar::operator=(double d)
+JSONVar& JSONVar::operator=( double d)
 {
   replaceJson(cJSON_CreateNumber(d));
+  return *this;
 }
 
-void JSONVar::operator=(const char* s)
+JSONVar& JSONVar::operator=( const char* s)
 {
   replaceJson(cJSON_CreateString(s));
+  return *this;
 }
 
-void JSONVar::operator=(const String& s)
+JSONVar& JSONVar::operator=( const String& s)
 {
   *this = s.c_str();
+  return *this;
 }
 
-void JSONVar::operator=(nullptr_t)
+JSONVar& JSONVar::operator=( std::nullptr_t)
 {
   replaceJson(cJSON_CreateNull());
+  return *this;
 }
 
 bool JSONVar::operator==(const JSONVar& v) const
 {
   return cJSON_Compare(_json, v._json, 1) ||
           (_json == NULL && v._json == NULL);
+  return *this;
 }
 
-bool JSONVar::operator==(nullptr_t) const
+bool JSONVar::operator==(std::nullptr_t) const
 {
   return (cJSON_IsNull(_json));
 }
@@ -256,15 +278,15 @@ JSONVar JSONVar::operator[]( const char* key )
 	if ( !cJSON_IsObject( _json ) )
 	{
 		replaceJson( cJSON_CreateObject() );
-  }
+	}
 	cJSON* json = cJSON_GetObjectItemCaseSensitive( _json, key );
 	if ( json == NULL )
 	{
 		json = cJSON_AddNullToObject( _json, key );
-  }
+	}
 	return JSONVar( json, _json );
 }
-  
+
 JSONVar JSONVar::operator[]( const char* key ) const
 {
 	if ( !cJSON_IsObject( _json ) )
@@ -289,17 +311,17 @@ JSONVar JSONVar::operator[]( int index )
 	if ( !cJSON_IsArray( _json ) )
 	{
 		replaceJson( cJSON_CreateArray() );
-  }
+	}
 	cJSON* json = cJSON_GetArrayItem( _json, index );
 	if ( json == NULL )
 	{
 		while ( index >= cJSON_GetArraySize( _json ) )
 		{
-      json = cJSON_CreateNull();
+			json = cJSON_CreateNull();
 
 			cJSON_AddItemToArray( _json, json );
-    }
-  }
+		}
+	}
 	return JSONVar( json, _json );
 }
 
@@ -308,7 +330,7 @@ JSONVar JSONVar::operator[](int index) const
 	if ( !cJSON_IsArray( _json ) )
 	{
 		return undefined;
-  }
+	}
 	cJSON* json = cJSON_GetArrayItem( _json, index );
 	return JSONVar( json, _json );
 }
@@ -319,7 +341,7 @@ JSONVar JSONVar::operator[]( const JSONVar& key ) const
 	{
 		int index = ( int ) key;
 		return ( *this )[ index ];
-  }
+	}
 	if ( cJSON_IsObject( _json ) && cJSON_IsString( key._json ) )
 	{
 		const char* str = ( const char* ) key;
