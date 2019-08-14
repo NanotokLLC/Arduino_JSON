@@ -35,31 +35,43 @@ JSONVar::JSONVar(struct cJSON* json, struct cJSON* parent) :
 {
 }
 
-JSONVar::JSONVar(bool b) :
+JSONVar::JSONVar(const bool& b) :
   JSONVar()
 {
   *this = b;
 }
 
-JSONVar::JSONVar(int i) :
+JSONVar::JSONVar( const int& i) :
   JSONVar()
 {
   *this = i;
 }
 
-JSONVar::JSONVar(long l) :
+JSONVar::JSONVar( const long& l) :
   JSONVar()
 {
   *this = l;
 }
 
-JSONVar::JSONVar(unsigned long ul) :
+JSONVar::JSONVar( const uint8_t& u8Value ) :
+  JSONVar()
+{
+	*this = u8Value;
+}
+
+JSONVar::JSONVar( const uint16_t& u16Value ) :
+	JSONVar()
+{
+	*this = u16Value;
+}
+
+JSONVar::JSONVar(const unsigned long& ul) :
   JSONVar()
 {
   *this = ul;
 }
 
-JSONVar::JSONVar(double d) :
+JSONVar::JSONVar(const double& d) :
   JSONVar()
 {
   *this = d;
@@ -145,6 +157,16 @@ JSONVar::operator int() const
   return cJSON_IsNumber(_json) ? _json->valueint : 0;
 }
 
+JSONVar::operator uint8_t() const
+{
+	return cJSON_IsNumber( _json ) ? _json->valueint : 0;
+}
+
+JSONVar::operator uint16_t() const
+{
+	return cJSON_IsNumber( _json ) ? _json->valueint : 0;
+}
+
 JSONVar::operator unsigned int() const
 {
   return static_cast< unsigned int >( cJSON_IsNumber(_json) ? _json->valueint : 0 );
@@ -213,31 +235,43 @@ JSONVar& JSONVar::operator=(JSONVar&& v)
 }
 #endif
 
-JSONVar& JSONVar::operator=(bool b)
+JSONVar& JSONVar::operator=(const bool& b)
 {
   replaceJson(b ? cJSON_CreateTrue() : cJSON_CreateFalse());
   return *this;
 }
 
-JSONVar& JSONVar::operator=( int i)
+JSONVar& JSONVar::operator=( const int& i)
 {
   replaceJson(cJSON_CreateNumber(i));
   return *this;
 }
 
-JSONVar& JSONVar::operator=( long l)
+JSONVar& JSONVar::operator=( const uint8_t& u8value )
+{
+	replaceJson( cJSON_CreateNumber( u8value ) );
+	return *this;
+}
+
+JSONVar& JSONVar::operator=( const uint16_t& u16Value )
+{
+	replaceJson( cJSON_CreateNumber( u16Value ) );
+	return *this;
+}
+
+JSONVar& JSONVar::operator=( const long& l)
 {
   replaceJson(cJSON_CreateNumber(l));
   return *this;
 }
 
-JSONVar& JSONVar::operator=( unsigned long ul)
+JSONVar& JSONVar::operator=( const unsigned long& ul)
 {
   replaceJson(cJSON_CreateNumber(ul));
   return *this;
 }
 
-JSONVar& JSONVar::operator=( double d)
+JSONVar& JSONVar::operator=( const double& d)
 {
   replaceJson(cJSON_CreateNumber(d));
   return *this;
@@ -352,13 +386,18 @@ JSONVar JSONVar::operator[]( const JSONVar& key ) const
 
 int JSONVar::length() const
 {
-  if (cJSON_IsString(_json)) {
-    return strlen(_json->string);
-  } else if (cJSON_IsArray(_json)) {
-    return cJSON_GetArraySize(_json);
-  } else {
-    return -1;
-  }
+	if ( cJSON_IsString( _json ) )
+	{
+		return strlen( _json->string );
+	}
+	else if ( cJSON_IsArray( _json ) )
+	{
+		return cJSON_GetArraySize( _json );
+	}
+	else
+	{
+		return -1;
+	}
 }
 
 JSONVar JSONVar::keys() const

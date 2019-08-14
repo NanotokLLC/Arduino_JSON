@@ -37,40 +37,46 @@ struct cJSON;
 
 class JSONVar : public Printable {
 public:
-  JSONVar();
-  JSONVar(bool b);
-  JSONVar(int i);
-  JSONVar(long l);
-  JSONVar(unsigned long ul);
-  JSONVar(double d);
-  JSONVar(const char* s);
-  JSONVar(const String& s);
-  JSONVar(const JSONVar& v);
+	JSONVar();
+	JSONVar( const bool& b );
+	JSONVar( const int& i );
+	JSONVar( const long& l );
+	JSONVar( const uint8_t& u8Value );
+	JSONVar( const uint16_t& u16Value );
+	JSONVar( const unsigned long& ul );
+	JSONVar( const double& d );
+	JSONVar( const char* s );
+	JSONVar( const String& s );
+	JSONVar( const JSONVar& v );
 #if __cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__)
-  JSONVar(JSONVar&& v);
+	JSONVar( JSONVar&& v );
 #endif
-  JSONVar(std::nullptr_t);
-  virtual ~JSONVar();
+	JSONVar( std::nullptr_t );
+	virtual ~JSONVar();
 
-  virtual size_t printTo(Print& p) const;
+	virtual size_t printTo( Print& p ) const;
 
-  operator bool() const;
-  operator int() const;
-  operator unsigned int() const;
-  operator long() const;
-  operator double() const;
-  operator const char*() const;
-  operator String() const;
+	operator bool() const;
+	operator int() const;
+	operator uint8_t() const;
+	operator uint16_t() const;
+	operator unsigned int() const;
+	operator long() const;
+	operator double() const;
+	operator const char*( ) const;
+	operator String() const;
 
   JSONVar& operator=(const JSONVar& v);
 #if __cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__)
   JSONVar& operator=(JSONVar&& v);
 #endif
-  JSONVar& operator=(bool b);
-  JSONVar& operator=(int i);
-  JSONVar& operator=(long l);
-  JSONVar& operator=(unsigned long ul);
-  JSONVar& operator=(double d);
+  JSONVar& operator=(const bool& b);
+  JSONVar& operator=( const int& i);
+  JSONVar& operator=( const long& l);
+  JSONVar& operator=( const uint8_t& u8Value );
+  JSONVar& operator=( const uint16_t& u16Value );
+  JSONVar& operator=( const unsigned long& ul);
+  JSONVar& operator=( const double& d);
   JSONVar& operator=(const char* s);
   JSONVar& operator=(const String& s);
   JSONVar& operator=(std::nullptr_t);
